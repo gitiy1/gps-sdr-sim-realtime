@@ -2,10 +2,8 @@ name: Build for Windows
 
 # A_NOTE: This workflow runs on any push to the main branch
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  repository_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
