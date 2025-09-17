@@ -1,0 +1,40 @@
+name: Build for Windows
+
+# A_NOTE: This workflow runs on any push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # A_NOTE: Use the latest available Windows runner
+    runs-on: windows-latest
+
+    steps:
+    # A_NOTE: 1. Check out the repository code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # A_NOTE: 2. Set up the MinGW-w64 environment on the Windows runner
+    - name: Set up MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          mingw-w64-x86_64-gcc
+
+    # A_NOTE: 3. Compile the source code using GCC
+    - name: Compile application
+      shell: msys2 {0}
+      run: |
+        gcc gpssim.c getopt.c -o gps-sdr-sim.exe -lm -lws2_32 -lpthread
+
+    # A_NOTE: 4. Upload the compiled executable as a build artifact
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: gps-sdr-sim-windows
+        path: gps-sdr-sim.exe
